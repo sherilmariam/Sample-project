@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aesthetic Chat Application</title>
+  <!-- Add Bootstrap CSS link -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Add custom CSS -->
+  <style>
+    body {
+      background-color: #f7f7f7;
+    }
+    .chat-container {
+      max-width: 500px;
+      margin: 20px auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .message {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 6px;
+    }
+    .user-message {
+      background-color: #007bff;
+      color: #fff;
+      text-align: right;
+    }
+    .bot-message {
+      background-color: #28a745;
+      color: #fff;
+      text-align: left;
+    }
+    .message-input {
+      padding: 10px;
+      border: none;
+      border-top: 1px solid #ccc;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container chat-container">
+    <div class="message bot-message">Hello! I am the chat bot.</div>
+  </div>
+
+  <div class="container mt-3">
+    <div class="input-group">
+      <input type="text" class="form-control message-input" placeholder="Type a message...">
+      <div class="input-group-append">
+        <button class="btn btn-primary send-btn" type="button">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Bootstrap and custom JS scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // Function to add user or bot message to the chat container
+    function addMessage(message, isUser) {
+      const chatContainer = $(".chat-container");
+      const messageClass = isUser ? "user-message" : "bot-message";
+      const messageDiv = $("<div>").addClass("message").addClass(messageClass).text(message);
+      chatContainer.append(messageDiv);
+      chatContainer.scrollTop(chatContainer[0].scrollHeight); // Scroll to the bottom of the chat container
+    }
+
+    // Function to handle sending the message to the server
+    function sendMessage() {
+      const messageInput = $(".message-input");
+      const message = messageInput.val();
+      if (message.trim() !== "") {
+        addMessage(message, true);
+        messageInput.val(""); // Clear the input field
+        // Send the message to the server using a POST request (you need to implement the API on the server-side)
+        $.post("/api", { message: message }, function(response) {
+          // Display the response from the server as a bot message
+          addMessage(response, false);
+        });
+      }
+    }
+
+    // Event listener for the "Send" button click
+    $(".send-btn").on("click", function() {
+      sendMessage();
+    });
+
+    // Event listener for the Enter key press in the message input field
+    $(".message-input").on("keypress", function(event) {
+      if (event.which === 13) {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
